@@ -4,10 +4,10 @@ import json, xmltodict
 user_api : str = 'http://xmlproxy.ru/search/xml?user=oleg.k%40dot-tech.ru&key=8f0fff33d198135710500061f5d17730'
 
 
-def get_urls(user_api=user_api, query=''):
-    # result = []
+def get_urls(user_api=user_api, query='', page=1):
+    result = []
     # for page in range(6):
-    url = f'{user_api}&query={query}'
+    url = f'{user_api}&query={query}&page={page}'
     search_result = requests.get(url)
     xpars = xmltodict.parse(search_result.text)
     res = json.dumps(xpars,

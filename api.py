@@ -167,21 +167,11 @@ class UserData(Resource):
 
     def get(self):
         data = request.get_json()
-        print(data)
         telegram_id = data['telegram_id']
         user = Users.find_by_telegram_id(telegram_id=telegram_id)
         if not user:
-            print(user)
             return {'status': 'user does not exist'}, 500
-        user_name = user.name
-        user_surname = user.surname
-        user_patronymic = user.patronymic
-        data = {
-            'name': user_name,
-            'surname': user_surname,
-            'patronymic': user_patronymic,
-        }
-        return json.dumps(data), 200
+        return user.to_dict(), 200
 
 
 class Test(Resource):

@@ -3,7 +3,7 @@ version: "3.1"
 services:
 
   deleteme_db:
-    container_name: database
+    container_name: database_dm
     restart: always
     image: postgres
    
@@ -19,8 +19,8 @@ services:
     networks: 
       - deleteme_botnet
 
-  deleteme_web:
-    container_name: web
+  web:
+    container_name: dweb
     build: .
     command: python app.py
     ports:
@@ -33,18 +33,18 @@ services:
     depends_on:
       - deleteme_db
       
-  deleteme_bot:
-    container_name: tbot
+  tbot:
+    container_name: dbot
     build: 
       context: .
     command: python main.py
     volumes:
       - .:/src
     ports:
-      - 8102:8102
+      - 8201:8201
     depends_on:
       - deleteme_db
-      - deleteme_web
+      - web
     restart: always
     networks: 
       - deleteme_botnet

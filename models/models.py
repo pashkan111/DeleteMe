@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-
+from sqlalchemy_serializer import SerializerMixin
 db = SQLAlchemy()
 
 
@@ -10,7 +10,7 @@ subs = db.Table('subs',
 )
 
 
-class Users(db.Model):
+class Users(db.Model, SerializerMixin):
     __tablename__ = 'users'
     __table_args__ = {'extend_existing': True}
 

@@ -4,21 +4,13 @@ from reportlab.lib.units import cm, mm, inch, pica
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.lib.styles import getSampleStyleSheet
-import json
-
-from reportlab.lib import colors
-from reportlab.platypus import Paragraph, Table, Frame, Spacer
 
 
-
-# def pdf_report(data):
 def pdf_report(data, name):
     
-    # Cirycic symbols
+    
     pdfmetrics.registerFont(TTFont('FreeSans', 'FreeSans.ttf'))
 
-    # Content of PDF
-    # fileName = 'bot_telegr.pdf'
     fileName = f'bot_telegram/handlers/reports/{name}.pdf'
 
     # Create PDF Page

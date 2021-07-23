@@ -4,10 +4,10 @@ from ..loader import dp, bot
 from .states import AuthState, SearchState, SearchStateUn
 from aiogram.dispatcher.filters import Command
 from aiogram.types import CallbackQuery, InputFile
-from .api_queries import check_user, register_user, post_words, get_result, result, delete_keywords, get_user_data, test
+from .api_queries import check_user, register_user, post_words, get_result, result, delete_keywords, get_user_data
 from ..keyboards.choise_buttons import choice, choice2
 import datetime, re
-import math
+from .send_mail import post_data_to_email
 
 
 data_for_registration = {}
@@ -21,6 +21,7 @@ async def answer(message: types.Message):
     telegram_id = message.from_user.id
     tel_id.append(telegram_id)
     await message.answer(f'Здравствуйте, {username} ✋')
+    await message.answer('Вы запустили бота автоматизированного анализа репутации в сети Интернет от веб-сервиса deleteme.ru. Для запуска введите установочные данные объекта анализа')
     check = await check_user(telegram_id)
     if check == 400:
         await message.answer('Извините, сервер не отвечает. Повторите попытку позднее ⚠')
@@ -79,11 +80,14 @@ async def get_key_words(message: types.Message, state: FSMContext):
     result = await post_words(data)
     await state.finish()
     await message.answer('Идет поиск по ключевым словам... 🔍\nПо завершении будет предоставлен отчет 📋')
-    res = await get_result(data)
+    # res = await get_result(data)
     user_data = await get_user_data({'telegram_id': telegram_id})
-    if not user_data or not res:
+    if not user_data:
+        # if not user_data or not res:
         await message.answer('Извините, сервер не отвечает. Повторите попытку позднее ⚠')
         return
+    p = await post_data_to_email(data=user_data, keywords=key_words)
+    await message.answer(p)
     name = user_data['name']
     patronymic = user_data['patronymic']
     surname = user_data['surname']
@@ -195,6 +199,7 @@ async def get_key_words(message: types.Message, state: FSMContext):
     data = await state.get_data()
     telegram_id = message.from_user.id
     data['telegram_id'] = telegram_id
+    data_for_registration[telegram_id].setdefault('keywords', )
     await register_user(data_for_registration[telegram_id])    
     await post_words(data)
     await SearchStateUn.next()
@@ -232,7 +237,7 @@ async def get_amount(message: types.Message, state: FSMContext):
     await message.answer(f'Данные получены. Каждые {round(30/amount)} дней, вам будет предоставляться отчет 📋📅')
     await message.answer('До свидания! 🤚')
     await state.finish()
-    await register_user(data_for_registration[telegram_id])
+    await post_data_to_email(data_for_registration[telegram_id])
     data_for_registration.pop(telegram_id)
 
 

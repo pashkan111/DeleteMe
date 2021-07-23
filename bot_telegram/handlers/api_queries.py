@@ -10,7 +10,7 @@ headers = {
 import requests
 import json
 
-HOST = '172.21.0.4:8200/'
+HOST = '172.21.0.3:8200/'
 
 @sync_to_async
 def check_user(telegram_id):
@@ -83,15 +83,9 @@ def delete_keywords(data):
 def get_user_data(data):
     req = requests.get(url=f'http://{HOST}user-data', headers=headers, data=json.dumps(data))
     if req.status_code == 200:
-        return json.loads(json.loads(req.text))
+        return json.loads(req.content)
     else:
         return False
 
 
-@sync_to_async
-def test(data):
-    req = requests.delete(url=f'http://{HOST}test', headers=headers, data=json.dumps(data))
-    if req.status_code == 200:
-        return req.text
-    else:
-        return False
+
